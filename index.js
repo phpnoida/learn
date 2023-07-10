@@ -1,51 +1,59 @@
-import { Box, Typography } from "@mui/material";
+import { Toolbar, Typography, AppBar, Box, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Outlet } from "react-router";
-import { DrawerHeader } from "../sidebar";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const drawerWidth = 240;
-const openedMixin = (theme) => ({
-  marginLeft: drawerWidth,
-  transition: theme.transitions.create("margin", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create("margin", {
+const TopBar = styled(AppBar)(({ theme, isDrawerOpen }) => ({
+  boxShadow: "none",
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  overflowX: "hidden",
-  marginLeft: `calc(${theme.spacing(0)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-const OutletContainer = styled(Box)(({ theme, isDrawerOpen }) => ({
-  marginLeft: drawerWidth,
-  whiteSpace: "nowrap",
   ...(isDrawerOpen && {
-    ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
-  }),
-  ...(!isDrawerOpen && {
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   }),
 }));
-
-const MainContainer = ({ isDrawerOpen }) => {
+const Navbar = ({ isDrawerOpen, setIsDrawerOpen }) => {
   return (
-    <OutletContainer isDrawerOpen={isDrawerOpen}>
-      <DrawerHeader />
-      <Box sx={{ flex: 1, p: 3 }}>
-        <Outlet />
-      </Box>
-    </OutletContainer>
+    <TopBar position="fixed" isDrawerOpen={isDrawerOpen}>
+      <Toolbar>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            size="large"
+            edge="start"
+            sx={{
+              color: "inherit",
+              marginRight: 5,
+              ...(isDrawerOpen && { display: "none" }),
+            }}
+            onClick={() => {
+              setIsDrawerOpen((prevState) => !prevState);
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            sx={{ display: { xs: "none", md: "block" } }}
+          >
+            Quorum Dashboard
+          </Typography>
+        </Box>
+      </Toolbar>
+    </TopBar>
   );
 };
 
-export default MainContainer;
+export default Navbar;
